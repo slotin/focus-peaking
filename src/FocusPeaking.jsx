@@ -118,7 +118,7 @@ export default function FocusPeaking() {
   const emaRef = useRef(null)
   const historyRef = useRef([]) // { t, value }
   const peakRef = useRef(0)
-  const showEdgesRef = useRef(true)
+  const showEdgesRef = useRef(false)
 
   const [devices, setDevices] = useState([])
   const [selectedDeviceId, setSelectedDeviceId] = useState('')
@@ -127,7 +127,7 @@ export default function FocusPeaking() {
   const [sharpness, setSharpness] = useState(0)
   const [peak, setPeak] = useState(0)
   const [trendKey, setTrendKey] = useState('trendStable')
-  const [showEdges, setShowEdges] = useState(true)
+  const [showEdges, setShowEdges] = useState(false)
   const [maxWidth, setMaxWidth] = useState(() => Number(localStorage.getItem('focus-peaking-width')) || 640)
   const [lang, setLang] = useState(() => localStorage.getItem('focus-peaking-lang') || (navigator.language?.startsWith('uk') ? 'uk' : 'en'))
   const s = STRINGS[lang]
