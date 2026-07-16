@@ -59,6 +59,7 @@ const STRINGS = {
     camera: n => `Камера ${n}`,
     connecting: 'Підключення…',
     showEdges: 'Показувати підсвітку країв',
+    size: 'Розмір',
     sharpness: 'Різкість',
     sessionPeak: 'Пік сесії',
     reset: 'reset',
@@ -81,6 +82,7 @@ const STRINGS = {
     camera: n => `Camera ${n}`,
     connecting: 'Connecting…',
     showEdges: 'Show edge highlighting',
+    size: 'Size',
     sharpness: 'Sharpness',
     sessionPeak: 'Session peak',
     reset: 'reset',
@@ -126,12 +128,14 @@ export default function FocusPeaking() {
   const [peak, setPeak] = useState(0)
   const [trendKey, setTrendKey] = useState('trendStable')
   const [showEdges, setShowEdges] = useState(true)
+  const [maxWidth, setMaxWidth] = useState(() => Number(localStorage.getItem('focus-peaking-width')) || 640)
   const [lang, setLang] = useState(() => localStorage.getItem('focus-peaking-lang') || (navigator.language?.startsWith('uk') ? 'uk' : 'en'))
   const s = STRINGS[lang]
   const [updateAvailable, setUpdateAvailable] = useState(false)
   const [updateDismissed, setUpdateDismissed] = useState(false)
 
   useEffect(() => { localStorage.setItem('focus-peaking-lang', lang) }, [lang])
+  useEffect(() => { localStorage.setItem('focus-peaking-width', String(maxWidth)) }, [maxWidth])
   useEffect(() => { showEdgesRef.current = showEdges }, [showEdges])
 
   // periodic check against the repo's main branch for a newer released version
@@ -358,6 +362,18 @@ export default function FocusPeaking() {
             <input type="checkbox" checked={showEdges} onChange={e => setShowEdges(e.target.checked)} className="rounded" />
             {s.showEdges}
           </label>
+          <label className="flex items-center gap-1.5 text-xs text-[var(--text-2)]">
+            {s.size}
+            <input
+              type="range"
+              min={320}
+              max={1600}
+              step={20}
+              value={maxWidth}
+              onChange={e => setMaxWidth(Number(e.target.value))}
+              className="w-20 align-middle"
+            />
+          </label>
           <div className="flex rounded-[var(--r-md)] border border-[var(--border)] overflow-hidden text-xs font-medium">
             <button
               onClick={() => setLang('uk')}
@@ -381,7 +397,7 @@ export default function FocusPeaking() {
         <div className="text-sm text-[var(--danger)] bg-[var(--danger-soft)] rounded-[var(--r-md)] px-3 py-2">{error}</div>
       ) : (
         <>
-          <div className="relative bg-black rounded-[var(--r-md)] overflow-hidden">
+          <div className="relative bg-black rounded-[var(--r-md)] overflow-hidden" style={{ maxWidth, margin: '0 auto' }}>
             {/* not display:none — some browsers (Safari) suspend frame decoding for hidden video elements */}
             <video ref={videoRef} className="absolute w-px h-px opacity-0 pointer-events-none -z-10" muted playsInline />
             <canvas ref={canvasRef} className="w-full h-auto block" />
