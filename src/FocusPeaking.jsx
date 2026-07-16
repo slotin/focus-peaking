@@ -185,8 +185,19 @@ export default function FocusPeaking() {
     const aCanvas = analysisCanvasRef.current
     const aCtx = aCanvas.getContext('2d', { willReadFrequently: true })
 
+    // some USB/UVC cameras hand out a handful of garbage/noise frames while the sensor
+    // is still negotiating format/exposure right after getUserMedia resolves — readyState
+    // already reports them as valid, so the only reliable fix is to just skip the first
+    // few and let auto-exposure settle before drawing anything
+    let warmupFrames = 20
+
     const tick = () => {
-      if (video.videoWidth && video.videoHeight) {
+      if (video.readyState >= 2 && video.videoWidth && video.videoHeight) {
+        if (warmupFrames > 0) {
+          warmupFrames--
+          rafRef.current = requestAnimationFrame(tick)
+          return
+        }
         if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
           canvas.width = video.videoWidth
           canvas.height = video.videoHeight
