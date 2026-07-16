@@ -13,7 +13,7 @@ It reads your camera through `getUserMedia`, computes a live sharpness score (La
 
 Supports multiple connected cameras (pick from a dropdown) and has a UK/EN language switch.
 
-Extracted from the [NN People](https://people.n3wnormal.com) internal portal's Project CAPTAIN tools, as a standalone repo so the team can use and iterate on it independently.
+![Focus Peaking screenshot](./screenshot.png)
 
 ## Run locally
 
