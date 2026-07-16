@@ -238,7 +238,15 @@ export default function FocusPeaking() {
       const video = videoRef.current
       if (video) {
         video.srcObject = stream
-        await video.play()
+        // in dev, React StrictMode mounts/unmounts/remounts this effect once, which can
+        // tear the stream down again mid-play() — that rejects with AbortError, which
+        // isn't a real camera failure and shouldn't surface as one
+        try {
+          await video.play()
+        } catch (playErr) {
+          if (playErr.name === 'AbortError') return
+          throw playErr
+        }
       }
       await refreshDevices() // labels/ids become available post-permission
       if (actualId) setSelectedDeviceId(actualId)
@@ -248,6 +256,7 @@ export default function FocusPeaking() {
       historyRef.current = []
       startLoop()
     } catch (e) {
+      if (e.name === 'AbortError') return
       setError(cameraErrorMessage(e, s))
     } finally {
       setStarting(false)
