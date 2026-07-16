@@ -409,12 +409,12 @@ export default function FocusPeaking() {
           >
             <div>
               <div className="text-xs mb-1" style={{ color: 'rgba(13,13,15,0.6)' }}>{s.sharpness}</div>
-              <div className="text-3xl font-bold">{sharpness.toFixed(1)}</div>
+              <div className="text-3xl font-bold">{Math.round(sharpness)}</div>
             </div>
             <div>
               <div className="text-xs mb-1" style={{ color: 'rgba(13,13,15,0.6)' }}>{s.sessionPeak}</div>
               <div className="text-3xl font-bold flex items-center gap-2">
-                {peak.toFixed(1)}
+                {Math.round(peak)}
                 <button onClick={resetPeak} className="text-sm px-3 py-1.5 rounded-[var(--r-md)] border border-[var(--border)] font-medium bg-[var(--surface)] text-[var(--text-2)]">
                   {s.reset}
                 </button>
