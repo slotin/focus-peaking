@@ -13,7 +13,7 @@ It reads your camera through `getUserMedia`, computes a live sharpness score (La
 - **Edge highlighting** — in-focus edges overlaid in green directly on the video, toggleable
 - A small on-canvas history sparkline of the last few seconds
 
-Supports multiple connected cameras (pick from a dropdown) and has a UK/EN language switch.
+Supports multiple connected cameras (pick from a dropdown) and has a UK/EN language switch. It also checks `package.json` on the `main` branch once an hour and shows a banner if a newer version was released.
 
 ![Focus Peaking screenshot](./screenshot.png)
 
@@ -25,6 +25,17 @@ npm run dev
 ```
 
 Open the printed local URL, grant camera access, and pick a camera from the dropdown if you have more than one.
+
+## Updating
+
+When you see the "new version available" banner:
+
+```
+git pull
+npm install
+```
+
+then restart `npm run dev` (or rebuild if you're running a built version). Bump `version` in `package.json` when you push a change worth notifying others about.
 
 ---
 
@@ -42,7 +53,7 @@ Open the printed local URL, grant camera access, and pick a camera from the drop
 - **Підсвітка країв** — контури у фокусі підсвічуються зеленим прямо на відео, можна вимкнути
 - Невеликий графік історії за останні кілька секунд прямо на відео
 
-Підтримує декілька підключених камер (вибір зі списку) і перемикач мови UK/EN.
+Підтримує декілька підключених камер (вибір зі списку) і перемикач мови UK/EN. Раз на годину перевіряє `package.json` в гілці `main` і показує банер, якщо вийшла новіша версія.
 
 ## Запуск локально
 
@@ -52,3 +63,14 @@ npm run dev
 ```
 
 Відкрий надруковане локальне посилання, дозволь доступ до камери й обери потрібну камеру зі списку, якщо їх декілька.
+
+## Оновлення
+
+Коли з'явився банер "доступна нова версія":
+
+```
+git pull
+npm install
+```
+
+потім перезапусти `npm run dev` (або перезбери, якщо працюєш зі збіркою). Онови `version` у `package.json`, коли пушиш зміну, про яку варто повідомити інших.

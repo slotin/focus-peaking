@@ -9,6 +9,22 @@ const TREND_WINDOW_MS = 800
 const HISTORY_WINDOW_MS = 6000
 const PEAK_PROXIMITY_PCT = 97
 
+// checked against the package.json on the main branch to detect a newer release
+const VERSION_CHECK_URL = 'https://raw.githubusercontent.com/slotin/focus-peaking/main/package.json'
+const VERSION_CHECK_INTERVAL_MS = 60 * 60 * 1000
+
+function isNewerVersion(latest, current) {
+  const a = String(latest).split('.').map(Number)
+  const b = String(current).split('.').map(Number)
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    const x = a[i] || 0
+    const y = b[i] || 0
+    if (x > y) return true
+    if (x < y) return false
+  }
+  return false
+}
+
 // 3x3 Laplacian kernel: [0,1,0; 1,-4,1; 0,1,0]
 function laplacianVarianceAndEdges(gray, w, h, roi, threshold, edgeOut) {
   let sum = 0
@@ -57,6 +73,8 @@ const STRINGS = {
     errOverconstrained: 'Обрана камера недоступна — спробуйте вибрати іншу зі списку.',
     errGeneric: (msg) => `Не вдалося підключити камеру: ${msg}`,
     errUnsupported: 'Цей браузер не підтримує доступ до камери (mediaDevices API відсутній).',
+    updateAvailable: 'Доступна нова версія застосунку — оновіть (git pull && npm install)',
+    updateDismiss: 'Приховати',
   },
   en: {
     noCameras: 'No cameras found',
@@ -77,6 +95,8 @@ const STRINGS = {
     errOverconstrained: 'Selected camera is unavailable — try picking another one from the list.',
     errGeneric: (msg) => `Could not connect to the camera: ${msg}`,
     errUnsupported: 'This browser does not support camera access (mediaDevices API missing).',
+    updateAvailable: 'A new version is available — please update (git pull && npm install)',
+    updateDismiss: 'Dismiss',
   },
 }
 
@@ -108,9 +128,28 @@ export default function FocusPeaking() {
   const [showEdges, setShowEdges] = useState(true)
   const [lang, setLang] = useState(() => localStorage.getItem('focus-peaking-lang') || (navigator.language?.startsWith('uk') ? 'uk' : 'en'))
   const s = STRINGS[lang]
+  const [updateAvailable, setUpdateAvailable] = useState(false)
+  const [updateDismissed, setUpdateDismissed] = useState(false)
 
   useEffect(() => { localStorage.setItem('focus-peaking-lang', lang) }, [lang])
   useEffect(() => { showEdgesRef.current = showEdges }, [showEdges])
+
+  // periodic check against the repo's main branch for a newer released version
+  useEffect(() => {
+    let cancelled = false
+    const check = async () => {
+      try {
+        const res = await fetch(`${VERSION_CHECK_URL}?t=${Date.now()}`, { cache: 'no-store' })
+        const { version } = await res.json()
+        if (!cancelled && version && isNewerVersion(version, __APP_VERSION__)) setUpdateAvailable(true)
+      } catch {
+        // offline or rate-limited — silently skip, will retry on the next interval
+      }
+    }
+    check()
+    const interval = setInterval(check, VERSION_CHECK_INTERVAL_MS)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [])
 
   // labels (and, on some browsers, the full device count) are only populated once
   // permission has been granted at least once — safe to call any time after that
@@ -294,6 +333,12 @@ export default function FocusPeaking() {
 
   return (
     <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-4">
+      {updateAvailable && !updateDismissed && (
+        <div className="flex items-center justify-between gap-3 text-xs mb-3 px-3 py-2 rounded-[var(--r-md)]" style={{ background: 'var(--danger-soft)', color: 'var(--danger)' }}>
+          <span>🔄 {s.updateAvailable}</span>
+          <button onClick={() => setUpdateDismissed(true)} className="underline shrink-0">{s.updateDismiss}</button>
+        </div>
+      )}
       <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
         <div className="flex items-center gap-2">
           <select
