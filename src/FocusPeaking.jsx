@@ -335,27 +335,27 @@ export default function FocusPeaking() {
 
           <div
             className="grid grid-cols-4 gap-4 mt-3 p-4 rounded-[var(--r-lg)] transition-colors duration-300"
-            style={{ backgroundColor: peakProximityColor(pctOfPeak) }}
+            style={{ backgroundColor: peakProximityColor(pctOfPeak), color: '#0D0D0F' }}
           >
             <div>
-              <div className="text-xs text-[var(--text-3)] mb-1">{s.sharpness}</div>
+              <div className="text-xs mb-1" style={{ color: 'rgba(13,13,15,0.6)' }}>{s.sharpness}</div>
               <div className="text-3xl font-bold">{sharpness.toFixed(1)}</div>
             </div>
             <div>
-              <div className="text-xs text-[var(--text-3)] mb-1">{s.sessionPeak}</div>
+              <div className="text-xs mb-1" style={{ color: 'rgba(13,13,15,0.6)' }}>{s.sessionPeak}</div>
               <div className="text-3xl font-bold flex items-center gap-2">
                 {peak.toFixed(1)}
-                <button onClick={resetPeak} className="text-sm px-3 py-1.5 rounded-[var(--r-md)] border border-[var(--border)] text-[var(--text-2)] hover:bg-[var(--surface-2)] font-medium bg-[var(--surface)]">
+                <button onClick={resetPeak} className="text-sm px-3 py-1.5 rounded-[var(--r-md)] border border-[var(--border)] font-medium bg-[var(--surface)] text-[var(--text-2)]">
                   {s.reset}
                 </button>
               </div>
             </div>
             <div>
-              <div className="text-xs text-[var(--text-3)] mb-1">{s.pctOfPeak}</div>
+              <div className="text-xs mb-1" style={{ color: 'rgba(13,13,15,0.6)' }}>{s.pctOfPeak}</div>
               <div className="text-3xl font-bold">{pctOfPeak}%</div>
             </div>
             <div>
-              <div className="text-xs text-[var(--text-3)] mb-1">{s.trend}</div>
+              <div className="text-xs mb-1" style={{ color: 'rgba(13,13,15,0.6)' }}>{s.trend}</div>
               <div className="text-3xl font-bold">{s[trendKey]}</div>
             </div>
           </div>
